@@ -129,8 +129,6 @@
 "unsigned"       { yylval = yytext; return Unsigned; }
 "update"         { yylval = yytext; return Update; }
 "using"          { yylval = yytext; return Using; }
-"utf8"           { yylval = yytext; return Utf8;}
-"utf8mb4"        { yylval = yytext; return Utf8mb4;}
 "validation"     { yylval = yytext; return Validation; }
 "varbinary"      { yylval = yytext; return Varbinary; }
 "varchar"        { yylval = yytext; return Varchar; }
@@ -141,6 +139,9 @@
 "zerofill"       { yylval = yytext; return Zerofill; }
 "zlib"           { yylval = yytext; return Zlib; }
 "null"           { yylval = yytext; return Snull; }
+
+"utf8mb4"|"utf8" { yylval = yytext; return CharSetNames; }
+"utf8_general_ci"|"utf8mb4_general_ci" { yylval = yytext; return CollationNames; }
 
 ['`]?[a-z0-9_\-]*['`]? { yylval = strdup(yytext); return SQAnyStr; }
 "/*"[a-z0-9 ]*"*/"   {}

@@ -30,10 +30,10 @@ ALTER TABLE tbl_name
 
 alter_specification:
     ADD [COLUMN] col_name column_definition [FIRST | AFTER col_name]
-  | ADD {INDEX|KEY} [index_name] [index_type] (key_part,...)
+  | ADD {INDEX|KEY} [index_name] (key_part,...)
   | ADD {FULLTEXT|SPATIAL} [INDEX|KEY] [index_name] (key_part,...)
-  | ADD [CONSTRAINT [symbol]] PRIMARY KEY [index_type] (key_part,...)
-  | ADD [CONSTRAINT [symbol]] UNIQUE [INDEX|KEY] [index_name] [index_type] (key_part,...)
+  | ADD [CONSTRAINT [symbol]] PRIMARY KEY (key_part,...)
+  | ADD [CONSTRAINT [symbol]] UNIQUE [INDEX|KEY] [index_name] (key_part,...)
   | ADD [CONSTRAINT [symbol]] FOREIGN KEY [index_name] (col_name,...) reference_definition
   | ALGORITHM [=] {DEFAULT|INPLACE|COPY}
   | ALTER [COLUMN] col_name {SET DEFAULT literal | DROP DEFAULT}

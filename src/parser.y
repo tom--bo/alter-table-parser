@@ -1,4 +1,4 @@
-%token IntNum RealNum Comma Semi LPar RPar BrckLPar BrckRPar Action Add After Algorithm Alter Always As Asc AutoIncrement AvgRowLength BigInt Binary Bit Blob Bool Boolean Btree Cascade Change Char Charset Character Checksum Collate Column ColumnFormat Comment Compact Compressed Compression Constraint Convert Copy Create Date Datetime Dec Decimal Default Delete Desc Disable Discard Disk Double Drop Dynamic Enable Encryption Engine Enum Exclusive Exists First Fixed Float Force Foreign Full Fulltext Generated Hash IF Import Index Inplace Int Integer Key Keys Lock LongBlob LongText Lz4 Match MediumBlob MediumInt MediumText Memory Modify National No None Not Snull Numeric On Partial Precision Primary Real Redundant References Rename Restrict RowFormat Set Shared SmallInt Simple Spatial Storage Stored Symbol Table Tablespace Temporary Text Time Timestamp TinyBlob TinyInt TinyText To Unique Unsigned Update Using Utf8 Utf8mb4 Validation Varbinary Varchar Virtual With Without Year SQAnyStr AnyStr Zerofill Zlib Error Equal
+%token IntNum RealNum Comma Semi LPar RPar BrckLPar BrckRPar Action Add After Algorithm Alter Always As Asc AutoIncrement AvgRowLength BigInt Binary Bit Blob Bool Boolean Btree Cascade Change Char Charset CharSetNames Character Checksum Collate CollationNames Column ColumnFormat Comment Compact Compressed Compression Constraint Convert Copy Create Date Datetime Dec Decimal Default Delete Desc Disable Discard Disk Double Drop Dynamic Enable Encryption Engine Enum Exclusive Exists First Fixed Float Force Foreign Full Fulltext Generated Hash IF Import Index Inplace Int Integer Key Keys Lock LongBlob LongText Lz4 Match MediumBlob MediumInt MediumText Memory Modify National No None Not Snull Numeric On Partial Precision Primary Real Redundant References Rename Restrict RowFormat Set Shared SmallInt Simple Spatial Storage Stored Symbol Table Tablespace Temporary Text Time Timestamp TinyBlob TinyInt TinyText To Unique Unsigned Update Using Validation Varbinary Varchar Virtual With Without Year SQAnyStr AnyStr Zerofill Zlib Error Equal
 %{
 #include <stdio.h>
 #include "yystype.h"
@@ -19,11 +19,11 @@ AlterSpecifications: AlterSpecification
 				   | AlterSpecifications Comma AlterSpecification
 
 AlterSpecification: Add OptColumn SQAnyStr ColDef OptPosition                                     { printf("type = 1\n"); }
-                  | Add IndexKey SQAnyStr OptIndexType LPar KeyParts RPar                         { printf("type = 2\n"); }
-                  | Add FulltextSpatial OptIndexKey OptIndexName OptIndexType KeyParts            { printf("type = 3\n"); }
-                  | Add OptConstraintSymbol Primary Key OptIndexType KeyParts                     { printf("type = 4\n"); }
-                  | Add OptConstraintSymbol Unique IndexKey SQAnyStr OptIndexType KeyParts        { printf("type = 5\n"); }
-                  | Add OptConstraintSymbol Foreign Key OptIndexName SQAnyStr ReferenceDefinition { printf("type = 6\n"); }
+                  | Add IndexKey SQAnyStr LPar KeyParts RPar                                      { printf("type = 2\n"); }
+                  | Add FulltextSpatial OptIndexKey OptIndexName LPar KeyParts RPar               { printf("type = 3\n"); }
+                  | Add OptConstraintSymbol Primary Key LPar KeyParts RPar                        { printf("type = 4\n"); }
+                  | Add OptConstraintSymbol Unique IndexKey OptIndexName LPar KeyParts RPar       { printf("type = 5\n"); }
+                  | Add OptConstraintSymbol Foreign Key OptIndexName LPar ColNames RPar ReferenceDefinition { printf("type = 6\n"); }
                   | Algorithm OptEqual AlgorithmType                                              { printf("type = 7\n"); }
                   | Alter OptColumn SQAnyStr SQAnyStr ColDef OptPosition                          { printf("type = 8\n"); }
                   | Change OptColumn SQAnyStr SQAnyStr ColDef OptPosition                         { printf("type = 9\n"); }
@@ -65,7 +65,10 @@ ReferenceOption: Restrict
                | No Action
                | Set Default
 
-CharsetDef: Character Set OptEqual CharsetOptions
+CharsetDef: Character Set CharSetNames
+
+ColNames: SQAnyStr
+		| ColNames Comma SQAnyStr
 
 ColDef: DataType ColDefOptions
 
@@ -117,9 +120,8 @@ SizeOption1or2: /* empty */
               | LPar IntNum RPar { setOpt1(atolong($2)); }
               | LPar IntNum Comma IntNum RPar { setOpt1(atolong($2)); setOpt2(atolong($4)); }
 CharacterSetOptions: /* empty */
-                   | Character Set SQAnyStr CollateOptions
-CollateOptions: /* empty */
-              | CollateOption
+                   | CharsetDef OptCollateDef
+
 NumOptions: /* empty */
           | NumOptions Unsigned
           | NumOptions Zerofill
@@ -133,7 +135,7 @@ ColDefOptions: /* empty */
              | ColDefOptions PrimaryKey { setHasPk(true); }
              | ColDefOptions Comments
              | ColDefOptions ColumnFormat ColumnFormatOption
-             | ColDefOptions CollateOption
+             | ColDefOptions CollateDef
              | ColDefOptions Storage StorageOption
              | ColDefOptions ReferenceDefinition
 
@@ -153,9 +155,6 @@ DefaultOption: Default Snull { setColsNull(true); }
              | Default DefaultVal
 DefaultVal: SQAnyStr {}
 
-CollateOption: Collate SQAnyStr
-             | Collate Equal SQAnyStr
-
 ColumnFormatOption: Fixed
                   | Dynamic
                   | Default
@@ -169,12 +168,9 @@ OptPosition: /* empty */
 
 OptIndexKey: /* empty */
 		   | IndexKey
+
 IndexKey: Index
 		| Key
-
-OptIndexType: /* empty */
-            | Using Btree
-            | Using Hash
 
 OptIndexName: /* empty */
 			| SQAnyStr
@@ -197,12 +193,10 @@ OptEqual: /* empty */
 OptDefault: /* empty */
 		| Default
 
-CharsetOptions: Utf8
-              | Utf8mb4
-              | SQAnyStr
+OptCollateDef: /* empty */
+			 | CollateDef
 
-OptCollateDef: Collate SQAnyStr
-             | Collate Equal SQAnyStr
+CollateDef: Collate CollationNames
 
 DisableEnable: Disable
 			 | Enable
