@@ -18,29 +18,29 @@ AlterTable: Alter Table SQAnyStr AlterSpecifications OptSemi
 AlterSpecifications: AlterSpecification
 				   | AlterSpecifications Comma AlterSpecification
 
-AlterSpecification: Add OptColumn SQAnyStr ColDef OptPosition                                     { printf("type = 1\n"); }
-                  | Add IndexKey SQAnyStr LPar KeyParts RPar                                      { printf("type = 2\n"); }
-                  | Add FulltextSpatial OptIndexKey OptIndexName LPar KeyParts RPar               { printf("type = 3\n"); }
-                  | Add OptConstraintSymbol Primary Key LPar KeyParts RPar                        { printf("type = 4\n"); }
-                  | Add OptConstraintSymbol Unique IndexKey OptIndexName LPar KeyParts RPar       { printf("type = 5\n"); }
-                  | Add OptConstraintSymbol Foreign Key OptIndexName LPar ColNames RPar ReferenceDefinition { printf("type = 6\n"); }
+AlterSpecification: Add OptColumn SQAnyStr ColDef OptPosition                                     { printf("type = 1, DML=ok\n"); }
+                  | Add IndexKey SQAnyStr LPar KeyParts RPar                                      { printf("type = 2, DML=ok\n"); }
+                  | Add FulltextSpatial OptIndexKey OptIndexName LPar KeyParts RPar               { printf("type = 3, DML=no\n"); }
+                  | Add OptConstraintSymbol Primary Key LPar KeyParts RPar                        { printf("type = 4, DML=ok\n"); }
+                  | Add OptConstraintSymbol Unique IndexKey OptIndexName LPar KeyParts RPar       { printf("type = 5, DML=ok\n"); }
+                  | Add OptConstraintSymbol Foreign Key OptIndexName LPar ColNames RPar ReferenceDefinition { printf("type = 6, DML=ok\n"); }
                   | Algorithm OptEqual AlgorithmType                                              { printf("type = 7\n"); }
-                  | Alter OptColumn SQAnyStr SQAnyStr ColDef OptPosition                          { printf("type = 8\n"); }
-                  | Change OptColumn SQAnyStr SQAnyStr ColDef OptPosition                         { printf("type = 9\n"); }
-                  | OptDefault CharsetDef OptCollateDef                                           { printf("type = 10\n"); }
-                  | Convert To CharsetDef OptCollateDef                                           { printf("type = 11\n"); }
-                  | DisableEnable Keys                                                            { printf("type = 12\n"); }
-                  | DiscardImport Tablespace                                                      { printf("type = 13\n"); }
-                  | Drop OptColumn SQAnyStr                                                       { printf("type = 14\n"); }
-                  | Drop IndexKey SQAnyStr                                                        { printf("type = 15\n"); }
-                  | Drop Primary Key                                                              { printf("type = 16\n"); }
-                  | Drop Foreign Key Symbol                                                       { printf("type = 17\n"); }
-                  | Force                                                                         { printf("type = 18\n"); }
-                  | Lock OptEqual LockType                                                        { printf("type = 19\n"); }
-                  | Modify OptColumn SQAnyStr ColDef OptPosition                                  { printf("type = 20\n"); }
-                  | Rename IndexKey SQAnyStr To SQAnyStr                                          { printf("type = 21\n"); }
-                  | Rename ToAs SQAnyStr                                                          { printf("type = 22\n"); }
-                  | WithWithout Validation                                                        { printf("type = 23\n"); }
+                  | Alter OptColumn SQAnyStr SQAnyStr ColDef OptPosition                          { printf("type = 8, DML=ok\n"); }
+                  | Change OptColumn SQAnyStr SQAnyStr ColDef OptPosition                         { printf("type = 9, DML=depends\n"); }
+                  | OptDefault CharsetDef OptCollateDef                                           { printf("type = 10, DML=depends\n"); }
+                  | Convert To CharsetDef OptCollateDef                                           { printf("type = 11, DML=no\n"); }
+                  | DisableEnable Keys                                                            { printf("type = 12, DML=ok\n"); }
+                  | DiscardImport Tablespace                                                      { printf("type = 13, DML=no\n"); }
+                  | Drop OptColumn SQAnyStr                                                       { printf("type = 14, DML=ok\n"); }
+                  | Drop IndexKey SQAnyStr                                                        { printf("type = 15, DML=ok\n"); }
+                  | Drop Primary Key                                                              { printf("type = 16, DML=no\n"); }
+                  | Drop Foreign Key Symbol                                                       { printf("type = 17, DML=ok\n"); }
+                  | Force                                                                         { printf("type = 18, DML=ok\n"); }
+                  | Lock OptEqual LockType                                                        { printf("type = 19, DML=no\n"); }
+                  | Modify OptColumn SQAnyStr ColDef OptPosition                                  { printf("type = 20, DML=depends\n"); }
+                  | Rename IndexKey SQAnyStr To SQAnyStr                                          { printf("type = 21, DML=ok\n"); }
+                  | Rename ToAs SQAnyStr                                                          { printf("type = 22, DML=ok\n"); }
+                  | WithWithout Validation                                                        { printf("type = 23, DML=ok\n"); }
 
 KeyParts: KeyPart
         | KeyParts Comma KeyPart
